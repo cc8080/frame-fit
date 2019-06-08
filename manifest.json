@@ -9,8 +9,8 @@
    ],
   "minimum_chrome_version" : "6.0.0.0",
   "icons" : {
-    "16" : "imageinfo-16.png",
-    "48" : "imageinfo-48.png",
+    "16" : "frame-fit-16.png",
+    "48" : "frame-fit-48.png",
     "128" : "frame-fit-128.png"
   },
   "manifest_version": 2

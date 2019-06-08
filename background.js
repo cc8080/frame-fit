@@ -2,12 +2,13 @@
 /**
  * Returns a handler which will execute the given script
  */
-function getClickHandler() {
-  return function(info, tab) {
-     chrome.tabs.executeScript({
-          file: 'content.js'
-        });
-  };
+function onContextMenuClick(info, tab) {
+  chrome.tabs.executeScript(tab.id, {
+    file: 'content.js',
+    allFrames: true,
+  }, function() {
+    chrome.tabs.sendMessage(tab.id, { type: 'frame-fit-activate-tab' });
+  })
 };
 
 /**
@@ -17,5 +18,5 @@ chrome.contextMenus.create({
   "title" : "Frame-X: adjust frame height",
   "type" : "normal",
   "contexts" : ["page", "frame"],
-  "onclick" : getClickHandler()
+  "onclick" : onContextMenuClick
 });

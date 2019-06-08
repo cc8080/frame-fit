@@ -15,7 +15,7 @@ function onContextMenuClick(info, tab) {
  * Create a context menu 
  */
 chrome.contextMenus.create({
-  "title" : "Frame-X: adjust frame height",
+  "title" : "Frame-Fit: adjust frame height",
   "type" : "normal",
   "contexts" : ["page", "frame"],
   "onclick" : onContextMenuClick

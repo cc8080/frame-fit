@@ -32,6 +32,8 @@
  * When the content script receives a frame-fit-child-response, it will
  * look up the frame element and resize it according to the response.
  *
+ * A snackbar will briefly appear to show done or nothing found.
+ *
  */
 
 // Adjust height of divs containing iframes with body elements so don't
@@ -44,6 +46,8 @@ if (typeof window.frameFitInjected === 'undefined') {
   const myLocation = document.location;
 
   const $ = document.querySelectorAll.bind(document);
+  const bgBlue = 'rgba(173, 216, 230, 0.25)'; 
+  const bgYellow = 'rgba(255, 255, 0, 0.25)';
 
   function askParentToResizeSelf() {
     // Pass back the body size to the parent
@@ -63,6 +67,9 @@ if (typeof window.frameFitInjected === 'undefined') {
     if (window.parent !== window) {
       console.log(`${myLocation}: This is a frame. Asking parent to resize us`);
       askParentToResizeSelf()
+    } else {
+      console.log(["askForResizeIfNotTop",window, window.parent, $]);
+      snackTime("Frame fit done", 1300, bgBlue);
     }
   }
 
@@ -112,16 +119,48 @@ if (typeof window.frameFitInjected === 'undefined') {
 
   // Add window message listener
   window.addEventListener('message', onWindowMessage);
-
+  const snackDiv = document.createElement('div');
+  snackDiv.id = "frame-fit-snackbar";
+  document.body.appendChild(snackDiv);
+  
   if (window.parent === window) {
-    // This is the top level. Add listener for chrome runtime message
-    chrome.runtime.onMessage.addListener((message) => {
-      // Received chrome runtime message
-      if (message.type === 'frame-fit-activate-tab') {
-        console.log(`${myLocation}: Message is frame-fit-activate-tab. Activating...`);
-        activate();
-      }
-    });
+
+    if ($('iframe').length == 0) {
+      // No frames here, so nothing to do
+      snackTime("Frame Fit found nothing to do. This message will not be repeated until the page is reloaded.", 5000, bgYellow);
+      
+    } else {
+      // This is the top level. Add listener for chrome runtime message
+      chrome.runtime.onMessage.addListener((message) => {
+        // Received chrome runtime message
+        if (message.type === 'frame-fit-activate-tab') {
+          console.log(`${myLocation}: Message is frame-fit-activate-tab. Activating...`);
+          activate();
+        }
+      });
+    }
+  }
+  
+  function snackTime(whadIDo, howLong, color) {
+    howLong = ( howLong < 1000 ) ? 1000 : howLong; // minimum is 1 second
+    const timeoutSecs = 1.0*howLong/1000; // get the decimal places
+    
+    snackDiv.innerHTML = whadIDo; // the message to show
+    snackDiv.style.backgroundColor = color;
+    
+    // Add animation: Take 0.5 seconds to fade in and out the snackbar. 
+    // However, delay the fade out process for x seconds
+    snackDiv.style['-webkit-animation'] = 'fadein 0.5s, fadeout 0.5s ' + timeoutSecs + 's';
+    snackDiv.style['animation'] = 'fadein 0.5s, fadeout 0.5s ' + timeoutSecs + 's';
+    
+    console.log(["snackTime",snackDiv, whadIDo, howLong, timeoutSecs]);
+    
+    // Add the "show" class to DIV
+    snackDiv.className = "show";
+
+    // After some seconds, remove the show class from DIV
+    setTimeout(function(){ 
+      snackDiv.className = snackDiv.className.replace("show", ""); }, howLong);
   }
 }
 

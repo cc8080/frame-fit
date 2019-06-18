@@ -1,8 +1,10 @@
 {
   "name" : "Frame-Fit",
-  "version" : "0.3",
+  "version" : "0.4",
   "description" : "Fit frames to content",
-  "background" : { "scripts": ["background.js"] },
+  "background" : { 
+    "scripts": ["background.js"] 
+  },
   "permissions" : [
     "contextMenus",
     "activeTab"

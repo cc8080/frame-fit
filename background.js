@@ -3,12 +3,16 @@
  * Returns a handler which will execute the given script
  */
 function onContextMenuClick(info, tab) {
-  chrome.tabs.executeScript(tab.id, {
-    file: 'content.js',
-    allFrames: true,
-  }, function() {
-    chrome.tabs.sendMessage(tab.id, { type: 'frame-fit-activate-tab' });
-  })
+  chrome.tabs.insertCSS(tab.id, {
+    file: 'content.css',
+    }, function() {
+      chrome.tabs.executeScript(tab.id, {
+        file: 'content.js',
+        allFrames: true,
+      }, function() {
+        chrome.tabs.sendMessage(tab.id, { type: 'frame-fit-activate-tab' });
+      })
+  });
 };
 
 /**

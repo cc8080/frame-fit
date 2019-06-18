@@ -1,0 +1,39 @@
+/* Style the snackbar. Note: background color is set in the script.  */
+#frame-fit-snackbar {
+  font-family: sans-serif;
+  visibility: hidden; 
+  color: #909090; /* Dark gray text color */
+  position: fixed; 
+  z-index: 1; 
+  padding: 10px;
+  left: 50%; 
+  bottom: 20px; 
+}
+
+/* Show the snackbar */
+#frame-fit-snackbar.show {
+  visibility: visible; 
+
+}
+
+/* Animations to fade in. Timing is set in the script. */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;} 
+  to {bottom: 20px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 20px; opacity: 1;}
+}
+
+/* Animations to fade out. Timing is set in the script. */
+@-webkit-keyframes fadeout {
+  from {bottom: 20px; opacity: 1;} 
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 20px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}

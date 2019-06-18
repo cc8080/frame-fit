@@ -1,18 +1,27 @@
 
 /**
- * Returns a handler which will execute the given script
+ * Create context menu and handler for keyboard shortcut
+ * Send message to run
  */
-function onContextMenuClick(info, tab) {
-  chrome.tabs.insertCSS(tab.id, {
-    file: 'content.css',
-    }, function() {
-      chrome.tabs.executeScript(tab.id, {
-        file: 'content.js',
-        allFrames: true,
+
+function styleAndRun(tab) {
+    // Inject our styles and then run the script
+    chrome.tabs.insertCSS(tab.id, {
+      file: 'content.css',
       }, function() {
-        chrome.tabs.sendMessage(tab.id, { type: 'frame-fit-activate-tab' });
-      })
-  });
+        chrome.tabs.executeScript(tab.id, {
+          file: 'content.js',
+          allFrames: true,
+        }, function() {
+          chrome.tabs.sendMessage(tab.id, { type: 'frame-fit-activate-tab' });
+        })
+    });
+}
+
+function onContextMenuClick(info, tab) {
+  // Run when context menu clicked
+  // N.B. we don't use the info
+  styleAndRun(tab);
 };
 
 /**
@@ -25,4 +34,14 @@ chrome.contextMenus.create({
   "contexts" : ["page", "frame"],
   "documentUrlPatterns": ["<all_urls>"],
   "onclick" : onContextMenuClick
+});
+
+/**
+ * Listen for a keyboard shortcut to start
+ */
+chrome.commands.onCommand.addListener(function(command) {
+  chrome.tabs.getSelected(function(tab) {
+    // Run on current tab
+    styleAndRun(tab);
+  });
 });
